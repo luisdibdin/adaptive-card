@@ -1,8 +1,7 @@
-package main
+package adaptivecard
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 // AdaptiveCard root
@@ -160,36 +159,4 @@ func (c AdaptiveCard) MarshalJSON() ([]byte, error) {
 	}
 
 	return json.Marshal(raw)
-}
-
-func main() {
-	card := AdaptiveCard{
-		Type:    "AdaptiveCard",
-		Version: "1.6",
-		Schema:  "http://adaptivecards.io/schemas/adaptive-card.json",
-	}
-
-	// Add text
-	card.AddBody(NewTextBlock("🚨 ECR Vulnerability Report"))
-
-	// Add container with facts
-	facts := NewFactSet(
-		Fact{Title: "Repo", Value: "notifications-lambda"},
-		Fact{Title: "Image", Value: "1.0.0"},
-		Fact{Title: "Critical", Value: "1"},
-		Fact{Title: "High", Value: "2"},
-	)
-	container := NewContainer(facts)
-	card.AddBody(container)
-
-	// Add action button
-	card.AddAction(Action{
-		Type:  "Action.OpenUrl",
-		Title: "View in AWS Console",
-		Url:   "https://console.aws.amazon.com/ecr",
-	})
-
-	// Marshal to JSON
-	b, _ := json.MarshalIndent(card, "", "  ")
-	fmt.Println(string(b))
 }
