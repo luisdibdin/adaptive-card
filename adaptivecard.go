@@ -24,11 +24,12 @@ type Element interface {
 // TextBlock
 // ----------------------
 type TextBlock struct {
-	Type   string `json:"type"`
-	Text   string `json:"text"`
-	Weight string `json:"weight,omitempty"`
-	Size   string `json:"size,omitempty"`
-	Wrap   bool   `json:"wrap,omitempty"`
+	Type      string `json:"type"`
+	Text      string `json:"text"`
+	Weight    string `json:"weight,omitempty"`
+	Size      string `json:"size,omitempty"`
+	Wrap      bool   `json:"wrap,omitempty"`
+	Separator bool   `json:"separator,omitempty"`
 }
 
 func NewTextBlock(text string) TextBlock {
@@ -49,6 +50,10 @@ func (t *TextBlock) WithWeight(weight string) {
 
 func (t *TextBlock) WithSize(size string) {
 	t.Size = size
+}
+
+func (t *TextBlock) WithSeparator() {
+	t.Separator = true
 }
 
 // ----------------------
