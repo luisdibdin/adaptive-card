@@ -2,6 +2,7 @@ package adaptivecard
 
 import (
 	"encoding/json"
+	"fmt"
 )
 
 // AdaptiveCard root
@@ -233,6 +234,32 @@ func (t *Table) AddColumn(width string) {
 
 func (t *Table) AddRow(cells ...TableCell) {
 	t.Rows = append(t.Rows, TableRow{Type: "TableRow", Cells: cells})
+}
+
+func (c *AdaptiveCard) AddMentionsMap(textPrefix string, mentions map[string]string) {
+	if c.MSTeams == nil {
+		c.MSTeams = &MSTeamsInfo{
+			Entities: []MSTeamsEntity{},
+		}
+	}
+
+	// Build the text with all <at> placeholders
+	text := textPrefix
+	for displayName := range mentions {
+		text += fmt.Sprintf(" <at>%s</at>", displayName)
+	}
+
+	c.AddBody(NewTextBlock(text))
+
+	// Add entities
+	for displayName, id := range mentions {
+		entity := MSTeamsEntity{
+			Type: "mention",
+			Text: fmt.Sprintf("<at>%s</at>", displayName),
+			ID:   id,
+		}
+		c.MSTeams.Entities = append(c.MSTeams.Entities, entity)
+	}
 }
 
 // ----------------------
