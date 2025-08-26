@@ -125,6 +125,7 @@ type Table struct {
 	Columns           []TableCol `json:"columns"`
 	Rows              []TableRow `json:"rows"`
 	FirstRowAsHeaders bool       `json:"firstRowAsHeaders"`
+	ShowGridLines     bool       `json:"showGridLines"`
 }
 
 type TableCol struct {
@@ -138,6 +139,7 @@ type TableRow struct {
 
 type TableCell struct {
 	Type  string    `json:"type"`
+	Style string    `json:"style"`
 	Items []Element `json:"items"`
 }
 
@@ -145,6 +147,7 @@ func NewTable() Table {
 	return Table{
 		Type:              "Table",
 		FirstRowAsHeaders: true,
+		ShowGridLines:     false,
 		Columns:           []TableCol{},
 		Rows:              []TableRow{},
 	}
@@ -152,6 +155,7 @@ func NewTable() Table {
 func NewTableCell(items ...Element) TableCell {
 	return TableCell{
 		Type:  "TableCell",
+		Style: "accent",
 		Items: items,
 	}
 }
@@ -166,11 +170,13 @@ func (t Table) toRaw() any {
 		Type              string     `json:"type"`
 		Columns           []TableCol `json:"columns"`
 		Rows              []any      `json:"rows"`
+		ShowGridLines     bool       `json:"showGridLines"`
 		FirstRowAsHeaders bool       `json:"firstRowAsHeaders"`
 	}{
 		Type:              t.Type,
 		Columns:           t.Columns,
 		Rows:              rows,
+		ShowGridLines:     t.ShowGridLines,
 		FirstRowAsHeaders: t.FirstRowAsHeaders,
 	}
 }
@@ -197,8 +203,10 @@ func (tc TableCell) toRaw() any {
 	return struct {
 		Type  string `json:"type"`
 		Items []any  `json:"items"`
+		Style string `json:"style"`
 	}{
 		Type:  tc.Type,
+		Style: tc.Style,
 		Items: items,
 	}
 }
