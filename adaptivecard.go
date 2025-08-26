@@ -61,8 +61,9 @@ func (t *TextBlock) WithSeparator() {
 // Container
 // ----------------------
 type Container struct {
-	Type  string    `json:"type"`
-	Items []Element `json:"items"`
+	Type      string    `json:"type"`
+	Separator bool      `json:"separator"`
+	Items     []Element `json:"items"`
 }
 
 func NewContainer(items ...Element) Container {
@@ -85,6 +86,10 @@ func (c Container) toRaw() any {
 		Type:  "Container",
 		Items: items,
 	}
+}
+
+func (t *Container) WithSeparator() {
+	t.Separator = true
 }
 
 // ----------------------
@@ -114,9 +119,10 @@ func (fs FactSet) toRaw() any {
 // Table
 // ----------------------
 type Table struct {
-	Type    string     `json:"type"`
-	Columns []TableCol `json:"columns"`
-	Rows    []TableRow `json:"rows"`
+	Type              string     `json:"type"`
+	Columns           []TableCol `json:"columns"`
+	Rows              []TableRow `json:"rows"`
+	FirstRowAsHeaders bool       `json:"firstRowAsHeaders"`
 }
 
 type TableCol struct {
@@ -135,9 +141,10 @@ type TableCell struct {
 
 func NewTable() Table {
 	return Table{
-		Type:    "Table",
-		Columns: []TableCol{},
-		Rows:    []TableRow{},
+		Type:              "Table",
+		FirstRowAsHeaders: true,
+		Columns:           []TableCol{},
+		Rows:              []TableRow{},
 	}
 }
 func NewTableCell(items ...Element) TableCell {
