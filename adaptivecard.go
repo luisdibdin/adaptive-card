@@ -129,7 +129,7 @@ type Table struct {
 }
 
 type TableCol struct {
-	Width string `json:"width"`
+	Width int `json:"width"`
 }
 
 type TableRow struct {
@@ -252,7 +252,7 @@ func (c *Container) AddItem(el Element) {
 	c.Items = append(c.Items, el)
 }
 
-func (t *Table) AddColumn(width string) {
+func (t *Table) AddColumn(width int) {
 	t.Columns = append(t.Columns, TableCol{Width: width})
 }
 
