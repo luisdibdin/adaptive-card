@@ -208,9 +208,14 @@ type MSTeamsInfo struct {
 	Entities []MSTeamsEntity `json:"entities"`
 }
 type MSTeamsEntity struct {
-	Type string `json:"type"`
-	Text string `json:"text"`
+	Type      string  `json:"type"`
+	Text      string  `json:"text"`
+	Mentioned Mention `json:"mentioned"`
+}
+
+type Mention struct {
 	ID   string `json:"id"`
+	Name string `json:"name"`
 }
 
 // ----------------------
@@ -236,7 +241,7 @@ func (t *Table) AddRow(cells ...TableCell) {
 	t.Rows = append(t.Rows, TableRow{Type: "TableRow", Cells: cells})
 }
 
-func (c *AdaptiveCard) AddMentionsMap(textPrefix string, mentions map[string]string) {
+func (c *AdaptiveCard) AddMentionsMap(textPrefix string, mentions []string) {
 	if c.MSTeams == nil {
 		c.MSTeams = &MSTeamsInfo{
 			Entities: []MSTeamsEntity{},
@@ -245,21 +250,22 @@ func (c *AdaptiveCard) AddMentionsMap(textPrefix string, mentions map[string]str
 
 	// Build the text with all <at> placeholders
 	text := textPrefix
-	for displayName := range mentions {
+	for _, displayName := range mentions {
 		text += fmt.Sprintf(" <at>%s</at>", displayName)
 	}
 
 	c.AddBody(NewTextBlock(text))
 
 	// Add entities
-	for displayName, id := range mentions {
-		entity := MSTeamsEntity{
-			Type: "mention",
-			Text: fmt.Sprintf("<at>%s</at>", displayName),
-			ID:   id,
-		}
-		c.MSTeams.Entities = append(c.MSTeams.Entities, entity)
+	entity := MSTeamsEntity{
+		Type: "mention",
+		Text: "@Team",
+		Mentioned: Mention{
+			ID:   "19:general@thread.tacv2",
+			Name: "Team",
+		},
 	}
+	c.MSTeams.Entities = append(c.MSTeams.Entities, entity)
 }
 
 // ----------------------
