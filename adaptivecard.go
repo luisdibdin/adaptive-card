@@ -43,6 +43,14 @@ func (t TextBlock) toRaw() any {
 	return t
 }
 
+func (t *TextBlock) WithWeight(weight string) {
+	t.Weight = weight
+}
+
+func (t *TextBlock) WithSize(size string) {
+	t.Size = size
+}
+
 // ----------------------
 // Container
 // ----------------------
