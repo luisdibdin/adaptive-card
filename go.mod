@@ -1,3 +1,3 @@
-module github.com/luisdibdin/adaptive-card
+module github.com/luisdibdin/adaptivecard
 
 go 1.25.0
