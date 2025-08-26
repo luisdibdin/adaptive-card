@@ -97,6 +97,88 @@ func (fs FactSet) toRaw() any {
 }
 
 // ----------------------
+// Table
+// ----------------------
+type Table struct {
+	Type    string     `json:"type"`
+	Columns []TableCol `json:"columns"`
+	Rows    []TableRow `json:"rows"`
+}
+
+type TableCol struct {
+	Width string `json:"width"`
+}
+
+type TableRow struct {
+	Type  string      `json:"type"`
+	Cells []TableCell `json:"cells"`
+}
+
+type TableCell struct {
+	Type  string    `json:"type"`
+	Items []Element `json:"items"`
+}
+
+func NewTable() Table {
+	return Table{
+		Type:    "Table",
+		Columns: []TableCol{},
+		Rows:    []TableRow{},
+	}
+}
+func NewTableCell(items ...Element) TableCell {
+	return TableCell{
+		Type:  "TableCell",
+		Items: items,
+	}
+}
+func (Table) isElement() {}
+func (t Table) toRaw() any {
+	// Convert rows and cells recursively
+	rows := make([]any, len(t.Rows))
+	for i, r := range t.Rows {
+		rows[i] = r.toRaw()
+	}
+	return struct {
+		Type    string     `json:"type"`
+		Columns []TableCol `json:"columns"`
+		Rows    []any      `json:"rows"`
+	}{
+		Type:    t.Type,
+		Columns: t.Columns,
+		Rows:    rows,
+	}
+}
+
+func (tr TableRow) toRaw() any {
+	cells := make([]any, len(tr.Cells))
+	for i, c := range tr.Cells {
+		cells[i] = c.toRaw()
+	}
+	return struct {
+		Type  string `json:"type"`
+		Cells []any  `json:"cells"`
+	}{
+		Type:  tr.Type,
+		Cells: cells,
+	}
+}
+
+func (tc TableCell) toRaw() any {
+	items := make([]any, len(tc.Items))
+	for i, el := range tc.Items {
+		items[i] = el.toRaw()
+	}
+	return struct {
+		Type  string `json:"type"`
+		Items []any  `json:"items"`
+	}{
+		Type:  tc.Type,
+		Items: items,
+	}
+}
+
+// ----------------------
 // Action
 // ----------------------
 type Action struct {
@@ -130,6 +212,14 @@ func (c *AdaptiveCard) AddAction(action Action) {
 
 func (c *Container) AddItem(el Element) {
 	c.Items = append(c.Items, el)
+}
+
+func (t *Table) AddColumn(width string) {
+	t.Columns = append(t.Columns, TableCol{Width: width})
+}
+
+func (t *Table) AddRow(cells ...TableCell) {
+	t.Rows = append(t.Rows, TableRow{Type: "TableRow", Cells: cells})
 }
 
 // ----------------------
