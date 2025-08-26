@@ -80,16 +80,18 @@ func (c Container) toRaw() any {
 		items[i] = el.toRaw()
 	}
 	return struct {
-		Type  string `json:"type"`
-		Items []any  `json:"items"`
+		Type      string `json:"type"`
+		Separator bool   `json:"separator"`
+		Items     []any  `json:"items"`
 	}{
-		Type:  "Container",
-		Items: items,
+		Type:      "Container",
+		Separator: c.Separator,
+		Items:     items,
 	}
 }
 
-func (t *Container) WithSeparator() {
-	t.Separator = true
+func (c *Container) WithSeparator() {
+	c.Separator = true
 }
 
 // ----------------------
@@ -161,13 +163,15 @@ func (t Table) toRaw() any {
 		rows[i] = r.toRaw()
 	}
 	return struct {
-		Type    string     `json:"type"`
-		Columns []TableCol `json:"columns"`
-		Rows    []any      `json:"rows"`
+		Type              string     `json:"type"`
+		Columns           []TableCol `json:"columns"`
+		Rows              []any      `json:"rows"`
+		FirstRowAsHeaders bool       `json:"firstRowAsHeaders"`
 	}{
-		Type:    t.Type,
-		Columns: t.Columns,
-		Rows:    rows,
+		Type:              t.Type,
+		Columns:           t.Columns,
+		Rows:              rows,
+		FirstRowAsHeaders: t.FirstRowAsHeaders,
 	}
 }
 
